@@ -1,0 +1,60 @@
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+
+    ports:
+      - "5678:5678"
+
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+
+    environment:
+      # ======================
+      # CORE
+      # ======================
+      - NODE_OPTIONS=--dns-result-order=ipv4first
+      - TZ=Africa/Nairobi
+
+      # ======================
+      # AUTH
+      # ======================
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=StrongPassword123
+
+      # ======================
+      # WEBHOOKS
+      # ======================
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - WEBHOOK_URL=http://localhost:5678/
+
+      # ======================
+      # SUPABASE POOLER (IMPORTANT FIX)
+      # ======================
+      - DB_POSTGRESDB_HOST=aws-1-eu-central-1.pooler.supabase.com
+      - DB_POSTGRESDB_PORT=6543
+      - DB_POSTGRESDB_DATABASE=postgres
+
+      # IMPORTANT: correct pooler username format
+      - DB_POSTGRESDB_USER=postgres.kezqeiblvypgashbqhax
+      - DB_POSTGRESDB_PASSWORD=1999Asiachi2020
+
+      # ======================
+      # SSL FIX (THIS FIXES YOUR ERROR)
+      # ======================
+      - DB_POSTGRESDB_SSL_ENABLED=true
+      - DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=false
+
+      # OPTIONAL (prevents Node TLS failures)
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+
+    volumes:
+      - ./docker/n8n_data:/home/node/.n8n
+
+    restart: always
